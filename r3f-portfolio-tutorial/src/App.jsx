@@ -10,6 +10,7 @@ import {
   Text, // 3Dテキストを描画
   useGLTF, // GLTF形式の3Dモデルをロード
 } from "@react-three/drei";
+import { useEffect, useRef } from "react";
 
 function App() {
   const macbook = useGLTF(
@@ -19,6 +20,16 @@ function App() {
     "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/cup-tea/model.gltf"
   );
   const donut = useGLTF("./donut.gltf");
+
+  const macbookRef = useRef();
+
+  useEffect(() => {
+    if (macbookRef.current) {
+      const rotation = macbookRef.current.rotation;
+      rotation.x = Math.max(Math.min(rotation.x, Math.PI), 0);  // この行で回転範囲を制限しています
+    }
+  }, [macbookRef.current]);
+
   return (
     <>
       <div>
@@ -44,7 +55,12 @@ function App() {
                 height={1.65}
                 positon={[0, 0, -1]}
               />
-              <primitive object={macbook.scene} position={[0, -1.5, 0]}>
+              <primitive
+                ref={macbookRef}
+                object={macbook.scene}
+                position={[0, -1.5, 0]}
+                rotation-x={0.4}
+              >
                 <Html
                   position={[0, 1.56, -1.4]}
                   distanceFactor={1.17}
@@ -97,6 +113,7 @@ function App() {
               font="RobotoSlab-Bold.ttf"
               fontSize={0.6}
               position={[0, 1.7, 0.75]}
+              wrapperClass="title-text"
             >
               React-thee-fiber
             </Text>
